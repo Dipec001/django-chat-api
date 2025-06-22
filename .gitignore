@@ -1,0 +1,25 @@
+# Ignore virtual environment folders
+venv/
+.venv/
+.env
+
+# Ignore database files
+*.sqlite3
+
+# Ignore editor/IDE specific files
+.vscode/
+.idea/
+
+# Ignore compiled Python files
+__pycache__/
+*.pyc
+*.pyo
+
+# Ignore backup files
+*.bak
+*.backup
+
+# Ignore celery files
+celerybeat-schedule
+*.dat
+*.dir
