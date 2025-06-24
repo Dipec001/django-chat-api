@@ -98,7 +98,7 @@ DATABASES = {
         'NAME': 'chat_db',
         'USER': 'postgres',
         'PASSWORD': 'Dipec12345@',
-        'HOST': 'localhost',
+        'HOST': 'db', # this instead of localhost bc of docker-compose
         'PORT': '5432',
     }
 }

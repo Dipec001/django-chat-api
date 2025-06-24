@@ -1,11 +1,9 @@
 from rest_framework import serializers
-from chat.models import (FriendRequest, UserProfile, Message, Group, GroupMembership, 
-                         GroupMessage)
+from chat.models import UserProfile
 from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
 from django.core.validators import validate_email
 from django.utils.html import escape
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
 
@@ -16,27 +14,29 @@ User = get_user_model()
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'username', 'email']
+        fields = ['id', 'email']
 
 
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, min_length=8)
     email = serializers.EmailField(validators=[validate_email])
+    full_name = serializers.CharField(write_only=True, required=False)
+    username = serializers.CharField(write_only=True, required=False)
 
     class Meta:
         model = User
-        fields = ['username', 'email', 'password']
-
-    def validate_username(self, value):
-        value = escape(value.strip())
-        if User.objects.filter(username=value).exists():
-            raise serializers.ValidationError("Username is already taken.")
-        return value
+        fields = ['email', 'password', 'username', 'full_name']
 
     def validate_email(self, value):
         value = escape(value.strip())
         if User.objects.filter(email=value).exists():
             raise serializers.ValidationError("Email is already registered.")
+        return value
+    
+    def validate_username(self, value):
+        value = escape(value.strip())
+        if UserProfile.objects.filter(username=value).exists():
+            raise serializers.ValidationError("Username is already taken.")
         return value
 
     def validate_password(self, value):
@@ -44,21 +44,34 @@ class RegisterSerializer(serializers.ModelSerializer):
         return value
 
     def create(self, validated_data):
-        user = User.objects.create_user(
-            username=validated_data['username'],
-            email=validated_data['email'],
-            password=validated_data['password']
+        full_name = validated_data.pop("full_name", "")
+        profile_username = validated_data.pop("username", "")
+
+        user = User.objects.create_user( 
+            email=validated_data["email"],
+            password=validated_data["password"]
         )
+
+        UserProfile.objects.create(
+            user=user,
+            username=profile_username or f"user_{user.id}",
+            full_name=full_name
+        )
+
         return user
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
-    user = UserSerializer(read_only=True)
-
     class Meta:
         model = UserProfile
-        fields = ['id', 'user', 'full_name', 'bio', 'avatar_url', 'created_at', 'updated_at']
+        fields = ['username', 'full_name', 'bio', 'avatar_url', 'created_at', 'updated_at']
+        read_only_fields = ['created_at', 'updated_at']
 
+    def validate_username(self, value):
+        value = escape(value.strip())
+        if UserProfile.objects.filter(username=value).exists():
+            raise serializers.ValidationError("Username is already taken.")
+        return value
 
 class EmailTokenObtainSerializer(serializers.Serializer):
     email = serializers.EmailField()
@@ -80,7 +93,6 @@ class EmailTokenObtainSerializer(serializers.Serializer):
             "access": str(refresh.access_token),
             "user": {
                 "id": user.id,
-                "username": user.username,
                 "email": user.email,
             }
         }

@@ -25,7 +25,6 @@ class RegisterView(generics.CreateAPIView):
                 "message": "User registered successfully",
                 "user": {
                     "id": user.id,
-                    "username": user.username,
                     "email": user.email,
                 },
                 "token": {
@@ -43,3 +42,6 @@ class EmailLoginView(TokenObtainPairView):
     token pair to prove the authentication of those credentials.
     """
     serializer_class = EmailTokenObtainSerializer
+
+
+# class UserProfile
