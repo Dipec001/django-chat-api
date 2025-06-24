@@ -14,7 +14,7 @@ class RegisterView(generics.CreateAPIView):
     """
     Takes user credentials and creates a new user account upon successful validation.
     """
-
+    permission_classes = [permissions.AllowAny]
     serializer_class = RegisterSerializer
 
     def post(self, request, *args, **kwargs):
@@ -40,6 +40,7 @@ class RegisterView(generics.CreateAPIView):
 
 
 class EmailLoginView(TokenObtainPairView):
+    permission_classes = [permissions.AllowAny]
     """
     Takes a set of user credentials and returns an access and refresh JSON web
     token pair to prove the authentication of those credentials.
