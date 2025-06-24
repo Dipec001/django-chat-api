@@ -1,9 +1,12 @@
 from rest_framework_simplejwt.tokens import RefreshToken
-from rest_framework import generics, status
+from rest_framework import generics, status, permissions
 from rest_framework.response import Response
-from chat.serializers.user_serializers import RegisterSerializer, EmailTokenObtainSerializer
+from chat.serializers.user_serializers import (RegisterSerializer, EmailTokenObtainSerializer, 
+                                               UserProfileSerializer)
 from rest_framework_simplejwt.views import TokenObtainPairView
+from drf_yasg.utils import swagger_auto_schema
 from django.contrib.auth import get_user_model
+
 
 User = get_user_model()
 
@@ -44,4 +47,30 @@ class EmailLoginView(TokenObtainPairView):
     serializer_class = EmailTokenObtainSerializer
 
 
-# class UserProfile
+class UserProfileView(generics.RetrieveUpdateAPIView):
+    serializer_class = UserProfileSerializer
+
+    def get_object(self):
+        return self.request.user.profile
+
+    @swagger_auto_schema(
+        operation_summary="Retrieve user profile",
+        operation_description="Returns the profile details of the currently authenticated user."
+    )
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
+
+    @swagger_auto_schema(
+        operation_summary="Update full user profile",
+        operation_description="Updates the full profile of the authenticated user. All fields must be included."
+    )
+    def put(self, request, *args, **kwargs):
+        return super().put(request, *args, **kwargs)
+
+    @swagger_auto_schema(
+        operation_summary="Partially update user profile",
+        operation_description="Updates only the specified fields of the user profile."
+    )
+    def patch(self, request, *args, **kwargs):
+        return super().patch(request, *args, **kwargs)
+
