@@ -85,6 +85,7 @@ chat-api/
 | POST   | /api/friends/decline/       | Decline friend request    |
 | DELETE | /api/friends/remove/        | Unfriend someone          |
 | GET    | /api/friends/list/          | List current friends      |
+| GET    | 	/api/users/search/?q=term  | Search users by name or username |
 
 ### 💬 One-on-One Messaging
 | Method | Endpoint                      | Description                |
@@ -102,7 +103,7 @@ chat-api/
 | POST   | /api/groups/{id}/send/            | Send group message                 |
 | GET    | /api/groups/{id}/messages/        | View group chat history            |
 
-### 🛎️ Notifications (Optional)
+### 🛎️ Notifications
 | Method | Endpoint            | Description                         |
 |--------|---------------------|-------------------------------------|
 | GET    | /api/notifications/ | List message/friend request alerts  |
@@ -117,11 +118,11 @@ chat-api/
 
 ## 🧩 Architecture Diagram
 
-![System Architecture](![chat_api_models_diagram](https://github.com/user-attachments/assets/826ba1e0-cd0c-4a51-9a61-14692a256643))
+![System Architecture]
 
 ## 🗃️ ER Diagram
 
-![ER Diagram](link-to-er-diagram.png)
+![ER Diagram](docs/chat_api_models_diagram.png)
 
 ## 🧠 Future Improvements
 
