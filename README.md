@@ -117,7 +117,7 @@ chat-api/
 
 ## 🧩 Architecture Diagram
 
-![System Architecture](link-to-architecture-diagram.png)
+![System Architecture](![chat_api_models_diagram](https://github.com/user-attachments/assets/826ba1e0-cd0c-4a51-9a61-14692a256643))
 
 ## 🗃️ ER Diagram
 
