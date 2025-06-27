@@ -85,13 +85,14 @@ chat-api/
 | POST   | /api/friends/decline/       | Decline friend request    |
 | DELETE | /api/friends/remove/        | Unfriend someone          |
 | GET    | /api/friends/list/          | List current friends      |
-| GET    | 	/api/users/search/?q=term  | Search users by name or username |
+| GET    | /api/users/search/?q=term   | Search users by name or username |
 
 ### 💬 One-on-One Messaging
 | Method | Endpoint                      | Description                |
 |--------|-------------------------------|----------------------------|
 | POST   | /api/messages/send/           | Send message to a user     |
 | GET    | /api/messages/user/{id}/      | View 1-on-1 chat history   |
+| GET    | /api/messages/inbox/          | View chat inbox            |
 
 ### 👥 Group Chat
 | Method | Endpoint                          | Description                        |

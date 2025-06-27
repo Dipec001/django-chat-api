@@ -18,7 +18,8 @@ class FriendRequestAPITests(APITestCase):
         client.force_authenticate(user=self.user1)
 
         url = reverse("send-friend-request")
-        response = client.post(url, {"to_user": self.user2.id})
+        data = {"to_user": self.user2.id}
+        response = client.post(url, data)
         json_response = response.json()
         self.assertEqual(json_response["status"], status.HTTP_201_CREATED)
         self.assertEqual(json_response["success"], True)
