@@ -92,37 +92,6 @@ class ChatHistoryView(generics.ListAPIView):
         return super().get(request, *args, **kwargs)
 
 
-# class ChatInboxView(APIView):
-#     """
-#     Get latest message from each friend (chat inbox).
-#     Only includes accepted friends.
-#     """
-
-#     permission_classes = [permissions.IsAuthenticated]
-
-#     @swagger_auto_schema(operation_summary="Get latest messages from each friend")
-#     def get(self, request):
-#         user = request.user
-#         friend_ids = get_friend_ids(user)
-
-#         # Get latest message between user and each friend
-#         latest_ids = (
-#             Message.objects
-#             .filter(
-#                 Q(sender=user, receiver__in=friend_ids) |
-#                 Q(receiver=user, sender__in=friend_ids)
-#             )
-#             .values('sender', 'receiver')
-#             .annotate(latest_id=Max('id'))
-#             .values_list('latest_id', flat=True)
-#         )
-
-#         # Fetch the actual message objects and serialize
-#         messages = Message.objects.filter(id__in=latest_ids).order_by('-created_at')
-#         serializer = MessageSerializer(messages, many=True)
-#         return Response(serializer.data)
-
-
 class ChatInboxView(APIView):
     """
     Get latest message from each friend (chat inbox).
