@@ -14,10 +14,16 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+    
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    restart: always
 
   web:
     build: .
-    command: python manage.py runserver 0.0.0.0:8000
+    command: daphne -b 0.0.0.0 -p 8000 djangochatapi.asgi:application
     volumes:
       - .:/app
     ports:
@@ -25,8 +31,12 @@ services:
     depends_on:
       db:
         condition: service_healthy
+      redis:
+        condition: service_started
     environment:
       - DEBUG=1
+      - REDIS_URL=redis://redis:6379
+      - DJANGO_SETTINGS_MODULE=djangochatapi.settings
 
 volumes:
   postgres_data:
