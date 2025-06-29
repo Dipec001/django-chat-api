@@ -33,6 +33,9 @@ jobs:
 
       - name: Run tests
         run: docker compose exec -T web python manage.py test
+      
+      - name: Run all Pytest tests
+        run: docker compose exec -T web pytest chat/tests/
 
       - name: Shut down
         run: docker compose down
