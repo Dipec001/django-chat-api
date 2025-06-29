@@ -58,7 +58,7 @@ async def test_connection_rejected_if_friend_does_not_exist():
         connected, close_code = await communicator.connect()
     except AssertionError:
         connected = False
-        close_code = 4001  # manually assume based on your consumer code
+        close_code = 4001  # manually assume based on my consumer code
 
     assert not connected
     assert close_code == 4001
@@ -81,7 +81,7 @@ async def test_connection_rejected_if_not_friends():
         connected, close_code = await communicator.connect()
     except AssertionError:
         connected = False
-        close_code = 4002  # based on your consumer
+        close_code = 4002  # based on my consumer
 
     assert not connected
     assert close_code == 4002
