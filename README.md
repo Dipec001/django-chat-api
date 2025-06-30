@@ -20,7 +20,7 @@ A real-time-ready chat API built with Django and DRF. Features user authenticati
 - Send & accept friend requests
 - One-on-one messaging
 - Group chat creation & management
-- Real-time-ready (polling/WebSockets optional)
+- Real-time-ready, WebSocket with Django Channels  
 - Dockerized + CI/CD + deployed
 
 ---
@@ -35,31 +35,36 @@ docker-compose up --build
 ```
 ## 🧱 Project Structure
 
-chat-api/
+DJANGOCHATAPI/
 ├── chat/ # Django app
 │ ├── models/
-│ │ ├── user.py
-│ │ ├── friend.py
-│ │ ├── message.py
-│ │ └── group.py
 │ ├── views/
 │ ├── serializers/
 │ ├── urls/
 │ ├── permissions.py
 │ ├── signals.py
 │ ├── init.py
+│ ├── utils.py
+│ ├── backends.py
+│ ├── consumers.py
+│ ├── routing.py
+│ ├── apps.py
 │ └── admin.py
-├── chatapi/ # Django project settings
+├── djangochatapi/ # Django project settings
 │ ├── init.py
 │ ├── settings.py
+│ ├── middlewares.py
 │ ├── urls.py
 │ └── wsgi.py
 ├── .github/
 │ └── workflows/
-│ └── ci.yml # GitHub Actions config
+│ └── checks.yml # GitHub Actions config
 ├── Dockerfile
 ├── docker-compose.yml
+├── Makefile
+├── LICENSE
 ├── requirements.txt
+├── pytest.ini
 ├── .env
 ├── README.md
 └── manage.py
@@ -127,7 +132,6 @@ chat-api/
 
 ## 🧠 Future Improvements
 
-- WebSocket with Django Channels  
 - Mobile-ready notifications  
 - Group admin controls  
 - Delivery/read receipts  
