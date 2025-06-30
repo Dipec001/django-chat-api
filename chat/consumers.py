@@ -5,9 +5,14 @@ from django.contrib.auth import get_user_model
 from chat.models import Message, Group, GroupMessage, GroupMembership, FriendRequest
 from django.db.models import Q
 import logging
-from prometheus_client import Counter
+from prometheus_client import Counter, Gauge
 
+active_connections = Gauge("websocket_connections_active", "Current active WebSocket connections")
+private_msg_counter = Counter("private_messages_total", "Total private messages")
+group_msg_counter = Counter("group_messages_total", "Total group messages")
 messages_sent = Counter("chat_messages_sent_total", "Total number of messages sent")
+websocket_errors = Counter("websocket_errors_total", "Total WebSocket errors")
+
 
 logger = logging.getLogger('chat')
 
@@ -34,11 +39,17 @@ class ChatConsumer(AsyncWebsocketConsumer):
         self.room_name = f"chat_{min(self.user.id, self.friend.id)}_{max(self.user.id, self.friend.id)}"
         await self.channel_layer.group_add(self.room_name, self.channel_name)
         await self.accept()
+
+        active_connections.inc()
+
         logger.info(f"[WS CONNECT] {self.user} connected to room {self.room_name}")
 
 
     async def disconnect(self, close_code):
         await self.channel_layer.group_discard(self.room_name, self.channel_name)
+
+        active_connections.dec()
+
         logger.info(f"[WS DISCONNECT] {self.user} disconnected from room {self.room_name}")
 
     async def receive(self, text_data):
@@ -69,12 +80,15 @@ class ChatConsumer(AsyncWebsocketConsumer):
                     }
                 }
             )
+            private_msg_counter.inc()
             messages_sent.inc() # Promotheus
 
         except KeyError:
+            websocket_errors.inc()
             logger.warning(f"[KEY ERROR] Message payload missing 'content' by {self.user}")
             await self.send_json_error("Missing 'content' in message payload.")
         except Exception as e:
+            websocket_errors.inc()
             logger.error(f"[EXCEPTION] Error in message receive by {self.user}: {str(e)}", exc_info=True)
             await self.send_json_error(f"Unexpected error: {str(e)}")
 
@@ -163,9 +177,11 @@ class GroupChatConsumer(AsyncWebsocketConsumer):
                     }
                 }
             )
+            group_msg_counter.inc()
             messages_sent.inc() # Promotheus
 
         except Exception as e:
+            websocket_errors.inc()
             logger.error(f"[GROUP EXCEPTION] {self.user} → Group {self.group_id}: {str(e)}", exc_info=True)
             await self.send(json.dumps({"error": f"An error occurred: {str(e)}"}))
 
