@@ -34,7 +34,7 @@ services:
       redis:
         condition: service_started
     environment:
-      - DEBUG=1
+      - DEBUG=True
       - REDIS_URL=redis://redis:6379
       - DJANGO_SETTINGS_MODULE=djangochatapi.settings
 

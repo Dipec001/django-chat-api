@@ -8,7 +8,7 @@ A real-time-ready chat API built with Django and DRF. Features user authenticati
 - Django + Django REST Framework
 - PostgreSQL
 - JWT Auth (`djangorestframework-simplejwt`)
-- Docker + docker-compose
+- Docker + docker-compose + Makefiles
 - GitHub Actions (CI/CD)
 - Railway (or EC2)
 

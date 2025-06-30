@@ -4,6 +4,10 @@ from channels.db import database_sync_to_async
 from django.contrib.auth import get_user_model
 from chat.models import Message, Group, GroupMessage, GroupMembership, FriendRequest
 from django.db.models import Q
+import logging
+
+
+logger = logging.getLogger('chat')
 
 User = get_user_model()
 
@@ -28,9 +32,12 @@ class ChatConsumer(AsyncWebsocketConsumer):
         self.room_name = f"chat_{min(self.user.id, self.friend.id)}_{max(self.user.id, self.friend.id)}"
         await self.channel_layer.group_add(self.room_name, self.channel_name)
         await self.accept()
+        logger.info(f"[WS CONNECT] {self.user} connected to room {self.room_name}")
+
 
     async def disconnect(self, close_code):
         await self.channel_layer.group_discard(self.room_name, self.channel_name)
+        logger.info(f"[WS DISCONNECT] {self.user} disconnected from room {self.room_name}")
 
     async def receive(self, text_data):
         try:
@@ -44,6 +51,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 content=content,
                 message_type=message_type,
             )
+            logger.info(f"[MESSAGE SENT] {self.user} → {self.friend}: {content}")
 
             await self.channel_layer.group_send(
                 self.room_name,
@@ -60,8 +68,10 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 }
             )
         except KeyError:
+            logger.warning(f"[KEY ERROR] Message payload missing 'content' by {self.user}")
             await self.send_json_error("Missing 'content' in message payload.")
         except Exception as e:
+            logger.error(f"[EXCEPTION] Error in message receive by {self.user}: {str(e)}", exc_info=True)
             await self.send_json_error(f"Unexpected error: {str(e)}")
 
     async def chat_message(self, event):
@@ -106,9 +116,11 @@ class GroupChatConsumer(AsyncWebsocketConsumer):
 
         await self.channel_layer.group_add(self.room_name, self.channel_name)
         await self.accept()
+        logger.info(f"[WS CONNECT] {self.user} joined group room {self.room_name}")
 
     async def disconnect(self, close_code):
         await self.channel_layer.group_discard(self.room_name, self.channel_name)
+        logger.info(f"[WS DISCONNECT] {self.user} left group room {self.room_name}")
 
     async def receive(self, text_data):
         try:
@@ -131,6 +143,8 @@ class GroupChatConsumer(AsyncWebsocketConsumer):
                 message_type=message_type,
             )
 
+            logger.info(f"[GROUP MESSAGE SENT] {self.user} → Group {self.group_id}: {content}")
+
             await self.channel_layer.group_send(
                 self.room_name,
                 {
@@ -147,6 +161,7 @@ class GroupChatConsumer(AsyncWebsocketConsumer):
             )
 
         except Exception as e:
+            logger.error(f"[GROUP EXCEPTION] {self.user} → Group {self.group_id}: {str(e)}", exc_info=True)
             await self.send(json.dumps({"error": f"An error occurred: {str(e)}"}))
 
     async def group_message(self, event):
