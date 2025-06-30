@@ -5,7 +5,9 @@ from django.contrib.auth import get_user_model
 from chat.models import Message, Group, GroupMessage, GroupMembership, FriendRequest
 from django.db.models import Q
 import logging
+from prometheus_client import Counter
 
+messages_sent = Counter("chat_messages_sent_total", "Total number of messages sent")
 
 logger = logging.getLogger('chat')
 
@@ -67,6 +69,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
                     }
                 }
             )
+            messages_sent.inc() # Promotheus
+
         except KeyError:
             logger.warning(f"[KEY ERROR] Message payload missing 'content' by {self.user}")
             await self.send_json_error("Missing 'content' in message payload.")
@@ -159,6 +163,7 @@ class GroupChatConsumer(AsyncWebsocketConsumer):
                     }
                 }
             )
+            messages_sent.inc() # Promotheus
 
         except Exception as e:
             logger.error(f"[GROUP EXCEPTION] {self.user} → Group {self.group_id}: {str(e)}", exc_info=True)

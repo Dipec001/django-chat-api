@@ -118,7 +118,7 @@ DJANGOCHATAPI/
 | Method | Endpoint     | Description          |
 |--------|--------------|----------------------|
 | GET    | /health/     | Health check route   |
-| GET    | /metrics/    | App usage stats (opt)|
+| GET    | /metrics/    | App usage stats      |
 
 ---
 
