@@ -50,4 +50,5 @@ txaio==25.6.1
 typing_extensions==4.14.0
 tzdata==2025.2
 uritemplate==4.2.0
+whitenoise==6.9.0
 zope.interface==7.2
