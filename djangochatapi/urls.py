@@ -57,11 +57,9 @@ urlpatterns = [
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
 
+    #metrics
+    path("metrics/", metrics_view)
 ]
-
-# ✅ Expose metrics only in development for now
-if settings.DEBUG:
-    urlpatterns += [path("metrics/", metrics_view),]
 
 # ✅ Serve static files during development
 if settings.DEBUG:
