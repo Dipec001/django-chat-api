@@ -1,7 +1,7 @@
 # Ignore virtual environment folders
 venv/
 .venv/
-.env
+.env*
 
 # Ignore database files
 *.sqlite3
@@ -32,3 +32,9 @@ celerybeat-schedule
 
 # Log files
 *.log
+
+# Node Modules
+node_modules/
+
+# Don't push react just yet
+client-react/

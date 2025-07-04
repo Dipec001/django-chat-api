@@ -6,7 +6,9 @@ from chat.serializers.user_serializers import (RegisterSerializer, EmailTokenObt
 from rest_framework_simplejwt.views import TokenObtainPairView
 from drf_yasg.utils import swagger_auto_schema
 from django.contrib.auth import get_user_model
+import logging
 
+logger = logging.getLogger('chat')
 
 User = get_user_model()
 
@@ -18,11 +20,16 @@ class RegisterView(generics.CreateAPIView):
     serializer_class = RegisterSerializer
 
     def post(self, request, *args, **kwargs):
+        from pprint import pprint
+        pprint(request.data)  # Or logger.info(request.data)
+        logger.info("🔵 Received registration request: %s", request.data)
         serializer = self.get_serializer(data=request.data)
 
         if serializer.is_valid():
             user = serializer.save()
             refresh = RefreshToken.for_user(user)  # Generate JWT token
+
+            logger.info("✅ User registered: %s", user.email)
 
             return Response({
                 "message": "User registered successfully",
@@ -36,6 +43,7 @@ class RegisterView(generics.CreateAPIView):
                 }
             }, status=status.HTTP_201_CREATED)
 
+        logger.warning("❌ Registration failed with errors: %s", serializer.errors)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
