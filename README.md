@@ -4,6 +4,11 @@ A real-time-ready chat API built with Django and DRF. Features user authenticati
 
 ---
 
+## Live API Docs
+[Chat API Swagger UI](http://16.170.61.99:8000/swagger/)
+
+---
+
 ## 🔧 Tech Stack
 - Django + Django REST Framework
 - PostgreSQL
