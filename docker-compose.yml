@@ -49,6 +49,7 @@ services:
         condition: service_started
     env_file:
       - .env.prod
+    restart: always
 
 volumes:
   postgres_data:

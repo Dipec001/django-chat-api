@@ -129,7 +129,7 @@ DJANGOCHATAPI/
 
 ## 🧩 Architecture Diagram
 
-![System Architecture]
+![System Architecture](/docs/system_architecture.png)
 
 ## 🗃️ ER Diagram
 
