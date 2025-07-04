@@ -1,4 +1,4 @@
-name: CI with Docker Compose
+name: CI Tests
 
 on:
   push:
@@ -6,36 +6,28 @@ on:
       - main
 
 jobs:
-  docker-tests:
+  tests:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
 
-      - name: Set up Docker Compose
-        run: docker compose version
-
-      - name: Build and start services
-        run: docker compose up -d --build
-
-      - name: Wait for DB to be ready
+      - name: Install dependencies
         run: |
-          until docker compose exec -T db pg_isready -U postgres; do
-            echo "Waiting for db..."; sleep 2;
-          done
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
 
-      - name: Run migrations
-        run: docker compose exec -T web python manage.py migrate
+      - name: Run migrations (using SQLite in CI)
+        run: CI=True python manage.py migrate
 
       - name: Run tests
-        run: docker compose exec -T web python manage.py test
-      
-      - name: Run all Pytest tests
-        run: docker compose exec -T web pytest chat/tests/
+        run: CI=True python manage.py test
 
-      - name: Shut down
-        run: docker compose down
+      - name: Run Pytest tests
+        run: CI=True pytest chat/tests/
