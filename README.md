@@ -5,7 +5,7 @@ A real-time-ready chat API built with Django and DRF. Features user authenticati
 ---
 
 ## Live API Docs
-[Chat API Swagger UI](http://16.170.61.99/swagger/)
+[Chat API Swagger UI](http://chat.buildwithdivine.xyz/swagger/)
 
 ---
 
@@ -40,6 +40,7 @@ docker-compose up --build
 ```
 ## 🧱 Project Structure
 
+```
 DJANGOCHATAPI/
 ├── chat/ # Django app
 │ ├── models/
@@ -73,7 +74,7 @@ DJANGOCHATAPI/
 ├── .env
 ├── README.md
 └── manage.py
-
+```
 
 ---
 

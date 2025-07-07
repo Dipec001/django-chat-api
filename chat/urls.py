@@ -10,13 +10,17 @@ from chat.views.group_views import (
     SearchGroupsView, JoinGroupView
 )
 from rest_framework.routers import DefaultRouter
-from django.http import JsonResponse
+from chat.health import health_check
 
 
 router = DefaultRouter()
 router.register(r'groups', GroupViewSet, basename='group')
 
 urlpatterns = [
+    # Health Check
+    path('health/', health_check, name='health_check'),
+
+    # User Views
     path('register/', RegisterView.as_view(), name='register'),
     path('profile/', UserProfileView.as_view(), name='user-profile'),
 
