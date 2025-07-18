@@ -5,7 +5,7 @@ A real-time-ready chat API built with Django and DRF. Features user authenticati
 ---
 
 ## Live API Docs
-[Chat API Swagger UI](http://chat.buildwithdivine.xyz/swagger/)
+[Chat API Swagger UI](https://chat.buildwithdivine.xyz/swagger/)
 
 ---
 
